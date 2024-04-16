@@ -21,8 +21,6 @@ const game = new myst.Game({
 
 game.createFont = function() {
 	// create a non-monospaced font by specifying widths for characters
-	// it is safe to skip characters that have the same width as the
-	// default character width
 	this.font = new myst.Font({
 		graphics: assets.preload.graphics.gamefont, // font graphics
 		size: [12, 18], // default character width and height
@@ -92,14 +90,20 @@ $canvas.addEventListener('click', () => {
 	// This is a debug build, so we can leave this code uncommented as-is, since we want to run it locally.
 	// Trust the preprocessor to skip this block of code when building release.
 
-			if (false) { // change this to "true" to skip intro locally, or to "false" to play it
+			if (DEBUG_SKIP_INTRO) {
 
 				// load assets and move to game state immediately, skipping loadscreen
 				assets.game = loader.load({
 					assets: assets.game, // here we are converting an asset list to actual assets
 					done: () => {
 						// all done loading assets
-						game.setState(titleState);
+
+						if (DEBUG_SKIP_TITLE) {
+							game.setState(gameState);
+						}
+						else {
+							game.setState(titleState);
+						}
 					}
 				});
 			
@@ -117,7 +121,7 @@ $canvas.addEventListener('click', () => {
 							done: () => {
 								// play the loadscreen outro
 								loadState.doOutro().then(() => {
-									// done loading, allow input from the loadscree
+									// done loading, allow input from the loadscreen
 									loadState.allowInput();
 								});
 							}
@@ -133,10 +137,8 @@ $canvas.addEventListener('click', () => {
 	// This is a release build
 
 	// Because this is a release build and we do not wish this code to run locally,
-	// we need to comment the code for local side to ignore it, but evaluate it as string expressions so it is
-	// written literally in the (release) version.
-
-	// Because this is a release build, the following 
+	// we need to comment the code for local side to ignore it, but evaluate it as string expressions
+	// to have it written literally to the output release sourcefile
 
 			// play the loadscreen intro and wait until it's done
 			//?= 'loadState.doIntro().then(() => {'
@@ -165,7 +167,10 @@ $canvas.addEventListener('click', () => {
 
 //? if (DEBUG) {
 
-	// Comment or uncomment the following line to skip the splash for debug builds.
-	//$canvas.click();
+	// (This block of code will be skipped in release ...)
+
+	if (DEBUG_SKIP_SPLASH) {
+		$canvas.click();
+	}
 
 //? }

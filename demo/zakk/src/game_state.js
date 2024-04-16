@@ -17,8 +17,13 @@ gameState.init = function() {
 	// graphics
 	this.gfx_master = assets.game.graphics.master;
 
-	this.world = null;
-	this.camera = [0, 0];
+	this.world = new World();
+	this.camera = new Camera();
+
+	this.player = {
+		x: 0,
+		y: 0
+	};
 };
 
 gameState.enter = function() {
@@ -39,8 +44,8 @@ gameState.draw = function() {
 
 	let x, y, posx, posy, ix, iy, tileData, tileRow, tileCol, tileX, tileY;
 
-	let view_x = this.camera[0];
-	let view_y = this.camera[1];
+	let view_x = this.camera.x;
+	let view_y = this.camera.y;
 
 	// clear surface first
 	this.surface.clear();
@@ -73,6 +78,8 @@ gameState.draw = function() {
 		}
 	}
 
+	this.paint.rectFill(this.player.x - view_x, this.player.y - view_y, 20, 40, 'red');
+
 	// draw scanlines
 	this.paint.graphics(assets.preload.graphics.scanlines, 0, 0);
 };
@@ -81,25 +88,55 @@ gameState.update = function() {
 	// debug~ move camera with arrow keys
 
 	if (keyHandler.isKeyDown(keyHandler.keyLeft)) {
+		/*
 		if (this.camera[0] > 0) {
-			this.camera[0] -= 2;
+			this.camera[0] -= 5;
+		}
+		*/
+		if (this.player.x > 0) {
+			this.player.x -= 2;
 		}
 	}
 	else if (keyHandler.isKeyDown(keyHandler.keyRight)) {
+		/*
 		if (this.camera[0] < this.world.width * TILESIZE - VIEWPORT_W) {
-			this.camera[0] += 2;
+			this.camera[0] += 5;
 		}
+		*/
+		this.player.x += 2;
 	}
 
 	if (keyHandler.isKeyDown(keyHandler.keyUp)) {
+		/*
 		if (this.camera[1] > 0) {
-			this.camera[1] -= 2;
+			this.camera[1] -= 5;
+		}
+		*/
+		if (this.player.y > 0) {
+			this.player.y -= 2;
 		}
 	}
 	else if (keyHandler.isKeyDown(keyHandler.keyDown)) {
+		/*
 		if (this.camera[1] < this.world.height * TILESIZE - VIEWPORT_H) {
-			this.camera[1] += 2;
+			this.camera[1] += 5;
 		}
+		*/
+		this.player.y += 2;
 	}
+
+	// follow player with camera
+
+	const player_center_x = this.player.x + 10;
+	const player_center_y = this.player.y + 20;
+
+	const camera_ideal_x = player_center_x - VIEWPORT_W / 2;
+	const camera_ideal_y = player_center_y - VIEWPORT_H / 2;
+
+
+	this.camera.moveTo(
+	myst.clamp(camera_ideal_x, 0, this.world.width * TILESIZE - VIEWPORT_W),
+	myst.clamp(camera_ideal_y, 0, this.world.height * TILESIZE - VIEWPORT_H)
+	);
 
 };

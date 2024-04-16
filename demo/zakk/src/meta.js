@@ -17,7 +17,7 @@
 //            |
 //   For the build system
 
-//                For the player
+//              For the interface
 //                      |
 //                      |
 //                      V
@@ -30,3 +30,14 @@ const GAME_VERSION = '0.0.3';
 //? RELEASE = !DEBUG;
 
 // <-- preprocessor variables <--
+
+//? if (DEBUG) {
+
+	// debug-related constants are listed here
+	// these will get stripped out when building release
+
+	const DEBUG_SKIP_SPLASH		= 1;  // set to 1 to skip splash intro
+	const DEBUG_SKIP_INTRO		= 1;  // set to 1 to skip the intro screen
+	const DEBUG_SKIP_TITLE		= 1;  // set to 1 to skip the title screen
+
+//? }
